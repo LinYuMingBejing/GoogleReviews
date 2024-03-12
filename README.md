@@ -1,5 +1,5 @@
 # Google Review System
-## API SPEC
+## Google Review APIs 
 |  Resources  | Method  | Permission  | Response  | 
 | --------    | -----|  -----| -----| 
 | /register/  | POST | X | <code>{"username": "cycarrier","email": "cycarrier@trendmicro.com","first_name": "Jack","last_name": "Wu"}</code>`
@@ -21,10 +21,37 @@
 | /review/{id}/  | DELETE | O | <code>{"detail": "Not found."} </code>`|
 
 ## Permission Error
+```
+ curl -X GET http://localhost/user
+ -H {"Authorization": "Bearer [access_token]"}
+```
 |  Statud Code  | Response  | 
 | --------    | -----|
 | 401  | <code> {"detail": "Authentication credentials were not provided."}</code>`|   
-| 401  |<code> {"detail": "Given token not valid for any token type","code": "token_not_valid", "messages": [{"token_class": "AccessToken", "token_type": "access","message": "{}"}]}</code>` |
+| 401  |<code> {"detail": "Given tokenREADME.md not valid for any token type","code": "token_not_valid", "messages": [{"token_class": "AccessToken", "token_type": "access","message": "{}"}]}</code>` |
+
+## API SPEC
+### User Register
+|  Parameter  | Requirement  | 
+| --------    | -----| 
+| username  | 1. A user with that username already exists. <br> 2. Ensure this field has no more than 150 characters.| 
+| password  | 1. Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number.<br> 2. Password must be a string between 8 and 16 letters.|
+| password2  | Password fields didn't match. | 
+| email  | 1. This field must be unique. <br> 2. Enter a valid email address. | 
+
+### Restaurant API
+|  Parameter  | Requirement  | 
+| --------    | -----| 
+| name  | 1. Ensure this field has no more than 64 characters. <br> 2. This field must be unique.| 
+
+### Review API
+|  Parameter  | Requirement  | 
+| --------    | -----| 
+| title  | Ensure this field has no more than 64 characters. | 
+| score  | Score must between 1 and 5 | 
+| user_id  | 1. The fields user_id, restaurant_id must make a unique set. <br> 2. Invalid pk - object does not exist. | 
+| restaurant_id  | 1. The fields user_id, restaurant_id must make a unique set. <br> 2. Invalid pk - object does not exist. | 
+
 
 ## DB Schema Desgin
 ![img](https://upload.cc/i1/2024/03/12/1Ubnrg.png)
