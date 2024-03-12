@@ -1,0 +1,16 @@
+env
+*.log
+__pycache__
+
+# Ignore bin files
+bin/*
+bin/
+
+# macOS
+.DS_Store
+
+
+*.log.*
+
+*.sqlite3
+migrations/

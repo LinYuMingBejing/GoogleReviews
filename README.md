@@ -59,8 +59,9 @@
 
 ### Start Djagno Application
 ```
-$ django-admin startproject CyCarrier
-$ python manage.py startapp restaurant
+$ cd src/
+$ docker build -t google-reviews .
+$ docker run -p 8001:8001 google-reviews:latest
 ```
 
 ### DB Migrate
@@ -73,3 +74,7 @@ $ python manage.py migrate
 ```
 python3 manage.py createsuperuser
 ```
+
+### TODO List
+* Custom response format
+
