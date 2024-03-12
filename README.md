@@ -57,13 +57,14 @@
 ![img](https://upload.cc/i1/2024/03/12/1Ubnrg.png)
 
 
-### Start Djagno Application
+## Start Djagno Application
 ```
 $ cd src/
 $ docker build -t google-reviews .
 $ docker run -p 8001:8001 google-reviews:latest
 ```
 
+## Note
 ### DB Migrate
 ```
 $ python manage.py makemigrations
