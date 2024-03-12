@@ -1,4 +1,9 @@
 # Google Review System
+## Environment:
+* Backend: Django Rest Framework
+* Deploy: Docker, Docker Compose
+
+
 ## Google Review APIs 
 |  Resources  | Method  | Permission  | Response  | 
 | --------    | -----|  -----| -----| 
