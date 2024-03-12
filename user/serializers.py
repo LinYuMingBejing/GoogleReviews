@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-
+import re
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
@@ -39,6 +39,10 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
+        if len(attrs['password']) > 16 or len(attrs['password']) < 8:
+            raise serializers.ValidationError({"password": "Password must be a string between 8 and 16 letters."})
+        if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$", attrs['password']):
+            raise serializers.ValidationError({"password": "Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number."})
         return attrs
 
     def create(self, validated_data):
