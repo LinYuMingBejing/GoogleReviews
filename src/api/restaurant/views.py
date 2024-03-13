@@ -1,4 +1,5 @@
 from rest_framework import filters
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -22,6 +23,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
         if self.action == 'list' or self.action == 'retrieve':
             self.permission_classes = [IsAuthenticatedOrReadOnly, ]
         return super(ReviewViewSet, self).get_permissions()
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.user == request.user or request.user.is_superuser:
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):

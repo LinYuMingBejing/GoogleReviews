@@ -5,7 +5,7 @@
 
 
 ## Google Review APIs 
-|  Resources  | Method  | Permission  | Response  | 
+|  Resources  | Method  | Authorization  | Response  | 
 | --------    | -----|  -----| -----| 
 | /register/  | POST | X | <code>{"username": "cycarrier","email": "cycarrier@trendmicro.com","first_name": "Jack","last_name": "Wu"}</code>`
 | /login/     | POST | X |<code> {"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxMDMzMTU1NCwiaWF0IjoxNzEwMjQ1MTU0LCJqdGkiOiJjMDY0MjQ4NTc1MDI0ZTU1ODlmYzBmZjdhMjM4MDhjZiIsInVzZXJfaWQiOjJ.pr6M2pnJ3Jyf_cFSJ5rj2-4sOc3zGQpbmaKIqEQpyoc","access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEwMjQ2MzU0LCJpYXQiOjE3MTAyNDUxNTQsImp0aSI6ImVmNDVhZDFlZmY2ODRmOTA5YTA5MmUyMTJmNDE5NzU5IiwidXNlcl9pZCI6Mn0iHNAFsjlxiKkrSmWoyF5iV2YG-YtCk11eLNUGaj6ZIw"} </code>` |
