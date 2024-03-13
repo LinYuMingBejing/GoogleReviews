@@ -4,50 +4,44 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from restaurant.models import Restaurant, Review
 
-login = '/login/'
-
-user1 = {
-    'username': 'test1',
-    'password': 'password123'
-}
-user2 = {
-    'username': 'test2',
-    'password': 'password321'
-}
 
 class RestaurantReviewTestCase(APITestCase):
+    login = '/login/'
+    admin_account = {
+        'username': 'root',
+        'password': 'password123'
+    }
+    user1_account = {
+        'username': 'test1',
+        'password': 'password321'
+    }
+    user2_account = {
+        'username': 'test2',
+        'password': 'password321'
+    }
+
     @classmethod
     def setUpClass(cls):
-        cls.user1 = User.objects.create_user(**user1)
-        cls.user2 = User.objects.create_user(**user2)
+        cls.user1 = User.objects.create_user(**cls.user1_account)
+        cls.user2 = User.objects.create_user(**cls.user2_account)
+        cls.admin = User.objects.create_superuser(**cls.admin_account)
         cls.restaurant = Restaurant.objects.create(name='JE Kitchen')
         cls.review = Review.objects.create(
             title='JWP Kitchen',
             content='Delicious meal',
             score=5,
-            user_id=cls.user1,
-            restaurant_id=cls.restaurant
+            user=cls.user1,
+            restaurant=cls.restaurant
         )
         cls.client = APIClient()
-        cls.token = cls.get_token()
-        cls.restaurant_request_data = {
-            'name': 'Kitchen island'
-        }
-        cls.review_request_data = {
-            'title': 'I"d even seen....',
-            'content': 'Worst service',
-            'score': 1,
-            'user_id': cls.user2.id,
-            'restaurant_id': cls.restaurant.id
-        }
-    
+        cls.user1_token = cls.get_token(cls.user1_account)
+        cls.user2_token = cls.get_token(cls.user2_account)
+        cls.admin_token = cls.get_token(cls.admin_account)
+        
     @classmethod
-    def get_token(cls):
-        response = cls.client.post(login, user1)
+    def get_token(cls, user):
+        response = cls.client.post(cls.login, user)
         return response.data['access']
-    
-    def setUp(self):
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
     
     @classmethod
     def tearDownClass(cls):
@@ -66,6 +60,9 @@ class RestaurantTestCase(RestaurantReviewTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+
+    def setUp(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.admin_token}')
         
     def test_restaurant_retrieve(self):
         restaurant = Restaurant.objects.get(pk=self.restaurant.id)
@@ -76,13 +73,26 @@ class RestaurantTestCase(RestaurantReviewTestCase):
         self.assertEqual(response.data.get('review_count', None), 1)
 
     def test_restaurant_create(self):
-        response = self.client.post(self.url, self.restaurant_request_data)
+        test_data = {
+            'name': 'Kitchen island'
+        }
+        response = self.client.post(self.url, test_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Restaurant.objects.count(), 2)
-        self.assertEqual(response.data.get('name', None), self.restaurant_request_data['name'])
+        self.assertEqual(response.data.get('name', None), test_data['name'])
+
+    def test_restaurant_create_with_bad_request(self):
+        test_data = {
+            'name': 'Kitchen island'
+        }
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.user1_token}')
+        response = self.client.post(self.url, test_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_restaurant_update(self):
-        test_data = {'name': 'JWP Kitchen'}
+        test_data = {
+            'name': 'JWP Kitchen'
+        }
         response = self.client.put(self.restaurant_detail.format(self.restaurant.id), test_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('name', None), test_data.get('name'))
@@ -113,10 +123,13 @@ class RestaurantTestCase(RestaurantReviewTestCase):
 class ReviewTestCase(RestaurantReviewTestCase):
     url = '/review/'
     review_detail = '/review/{}/'
-
+    
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+
+    def setUp(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.user1_token}')
         
     def test_review_retrieve(self):
         review = Review.objects.get(pk=self.review.id)
@@ -126,21 +139,63 @@ class ReviewTestCase(RestaurantReviewTestCase):
         self.assertEqual(response.data.get('content', None), review.content)
         self.assertEqual(response.data.get('score', None), review.score)
 
+    def test_review_create_with_duplicate_user_id(self):
+        test_data = {
+            'title': 'I"d even seen....',
+            'content': 'Worst service',
+            'score': 1,
+            'user': self.user1.id,
+            'restaurant': self.restaurant.id
+        }
+        response = self.client.post(self.url, test_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_review_create_with_bad_request(self):
+        test_data = {
+            'title': 'I"d even seen....',
+            'content': 'Worst service',
+            'score': 1,
+            'user': self.user2.id,
+            'restaurant': self.restaurant.id
+        }
+        response = self.client.post(self.url, test_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_review_create(self):
-        response = self.client.post(self.url, self.review_request_data)
+        test_data = {
+            'title': 'I"d even seen....',
+            'content': 'Worst service',
+            'score': 1,
+            'user': self.user2.id,
+            'restaurant': self.restaurant.id
+        }
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.user2_token}')
+        response = self.client.post(self.url, test_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Review.objects.count(), 2)
-        self.assertEqual(response.data.get('title', None), self.review_request_data['title'])
-        self.assertEqual(response.data.get('content', None), self.review_request_data['content'])
-        self.assertEqual(response.data.get('score', None), self.review_request_data['score'])
+        self.assertEqual(response.data.get('title', None), test_data['title'])
+        self.assertEqual(response.data.get('content', None), test_data['content'])
+        self.assertEqual(response.data.get('score', None), test_data['score'])
+
+    def test_review_update_with_bad_request(self):
+        test_data = {
+            'title': 'Delicious food',
+            'content': 'Best service',
+            'score': 5,
+            'user': self.user2.id,
+            'restaurant': self.restaurant.id
+        }
+        response = self.client.put(self.review_detail.format(self.review.id), test_data)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_review_update(self):
         test_data = {
             'title': 'Delicious food',
             'content': 'Best service',
-            'score':5,
-            'user_id': self.user2.id,
-            'restaurant_id': self.restaurant.id
+            'score': 5,
+            'user': self.user1.id,
+            'restaurant': self.restaurant.id
         }
         response = self.client.put(self.review_detail.format(self.review.id), test_data)
 
