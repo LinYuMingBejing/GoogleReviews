@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        exclude = ['user_id', 'created_time', 'updated_time'] 
+        exclude = ['user', 'created_time', 'updated_time'] 
 
 
 class RegisterSerializer(serializers.ModelSerializer):

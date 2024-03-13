@@ -17,8 +17,8 @@ class Review(models.Model):
     title = models.CharField(max_length=64, null=False, default='')
     content = models.TextField(null=False, max_length=1024, default='')
     score = models.PositiveIntegerField(default=0)
-    restaurant_id = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='reviews')
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews', default='')
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews', default='')
     created_time = models.DateTimeField(default=timezone.now)
     updated_time = models.DateTimeField(auto_now=True)
 
@@ -26,5 +26,5 @@ class Review(models.Model):
         return self.title
     
     class Meta:
-        unique_together = ('restaurant_id', 'user_id',)
+        unique_together = ('restaurant', 'user',)
     

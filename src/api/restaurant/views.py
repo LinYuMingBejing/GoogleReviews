@@ -2,7 +2,7 @@ from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
 
 from restaurant.models import Restaurant, Review
 from restaurant.serializers import (
@@ -16,17 +16,17 @@ from restaurant.serializers import (
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if self.action == 'list' or self.action == 'get':
-            permission_classes = [IsAuthenticatedOrReadOnly]
-        else:
-            permission_classes = [IsAuthenticated]
-        return [permission() for permission in permission_classes]
+        if self.action == 'list' or self.action == 'retrieve':
+            self.permission_classes = [IsAuthenticatedOrReadOnly, ]
+        return super(ReviewViewSet, self).get_permissions()
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all()
+    permission_classes = [IsAdminUser]
     serializer_class = RestaurantSerializer
     filter_backends = (filters.SearchFilter, filters.OrderingFilter,)
     search_fields = ['name']
@@ -39,11 +39,9 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def get_permissions(self):
-        if self.action == 'list' or self.action == 'get':
-            permission_classes = [IsAuthenticatedOrReadOnly]
-        else:
-            permission_classes = [IsAuthenticated]
-        return [permission() for permission in permission_classes]
+        if self.action in ['list', 'retrieve', 'reviews']:
+            self.permission_classes = [IsAuthenticatedOrReadOnly, ]
+        return super(RestaurantViewSet, self).get_permissions()
     
     def get_serializer(self, *args, **kwargs):
         if isinstance(kwargs.get('data', {}), list):

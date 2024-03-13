@@ -13,4 +13,3 @@ bin/
 *.log.*
 
 *.sqlite3
-migrations/

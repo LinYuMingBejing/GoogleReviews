@@ -10,26 +10,33 @@ class ReviewSerializer(serializers.ModelSerializer):
     content = serializers.CharField(required=True, max_length=1024)
     score = serializers.IntegerField(required=True)
     
-    def validate(self, attrs):
-        if self.context['request'].method == 'PUT':
-            if attrs.get('user_id') != self.instance.user_id or \
-                attrs.get('restaurant_id') != self.instance.restaurant_id:
-                raise serializers.ValidationError("restaurant_id and user_id can't not be modified")
-        return attrs
-    
     def validate_score(self, score):
         if score < 0 or score > 5:
             raise serializers.ValidationError("Score must between 1 and 5")
         return score
     
+    def validate_user(self, user):
+        if self.context['request'].user != user:
+            raise serializers.ValidationError("user ID is not matched")
+        if self.context['request'].method == 'PUT' and \
+            user != self.instance.user:
+            raise serializers.ValidationError("user can't not be modified")
+        return user
+    
+    def validate_restaurant(self, restaurant):
+        if self.context['request'].method == 'PUT' and \
+            restaurant != self.instance.restaurant:
+                raise serializers.ValidationError("restaurant can't not be modified")
+        return restaurant
+    
     class Meta:
         model = Review
-        fields = ('id', 'title', 'content', 'score', 'restaurant_id', 'user_id')
+        fields = ('id', 'title', 'content', 'score', 'restaurant', 'user')
 
         validators = [
             UniqueTogetherValidator(
                 queryset=Review.objects.all(),
-                fields=['user_id', 'restaurant_id']
+                fields=['user', 'restaurant']
             )
         ]
 
@@ -37,7 +44,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 class RestaurantReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        exclude = ['restaurant_id', 'created_time', 'updated_time'] 
+        exclude = ['restaurant', 'created_time', 'updated_time'] 
 
 
 class RestaurantListSerializer(serializers.ListSerializer):
