@@ -6,6 +6,7 @@ from rest_framework.validators import UniqueValidator
 
 from restaurant.models import Review
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

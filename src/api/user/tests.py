@@ -5,6 +5,7 @@ from rest_framework.test import APIClient, APITestCase
 
 from restaurant.models import Restaurant, Review
 
+
 # Create your tests here.
 class UserTestCase(APITestCase):
     url = '/user/'
