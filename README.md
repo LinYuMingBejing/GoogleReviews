@@ -61,6 +61,7 @@
 ## DB Schema Desgin
 ![img](https://upload.cc/i1/2024/03/12/1Ubnrg.png)
 
+* Unique fileds: <br> 1. Review: (restaurant_id, user_id)<br> 2. Restaurant: (name)
 
 ## Start Djagno Application
 ```
