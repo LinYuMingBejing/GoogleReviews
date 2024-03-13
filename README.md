@@ -18,7 +18,7 @@
 | /restaurant/  | POST | O (Admin) | <code> {"id": 4, "name": "八里鹽酥雞", "review_count": 0, "score": 0}</code>` |
 | /restaurant/{id}/  | PUT | O (Admin) | <code> { "id": 4, "name": "八里美味雞排", "review_count": 0, "score": 0 }</code>` |
 | /restaurant/{id}/  | DELETE | O (Admin) | <code>{"detail": "Not found."} </code>`|
-| /restaurant/{id}/reviews/  | GET | O | <code> [{"id": 1,"title": "此味僅天上有", "content": "香港必推美食", "score": 5, "user": 1}] </code>`  |
+| /restaurant/{id}/reviews/  | GET | X | <code> [{"id": 1,"title": "此味僅天上有", "content": "香港必推美食", "score": 5, "user": 1}] </code>`  |
 | /review/  | GET | X | <code> {"count": 6,"next": "http://localhost:8000/review/?page=2","previous": null,"results": [{"id": 1, "title": "此味僅天上有", "content": "香港必推美食","score": 5, "restaurant": 1, "user": 1},....]} </code>` |
 | /review/{id}/  | GET | X | <code> {"id": 1, "title": "此味僅天上有", "content": "香港必推美食", "score": 5, "restaurant": 1, "user": 1} </code>` |
 | /review/  | POST | O |<code> {"id": 7, "title": "好好吃", "content": "絕世美味", "score": 5, "restaurant": 1, "user": 2} </code>` |
