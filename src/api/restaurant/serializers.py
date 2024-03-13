@@ -6,6 +6,17 @@ from restaurant.models import Restaurant, Review
         
 
 class ReviewSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(required=True, max_length=64)
+    content = serializers.CharField(required=True, max_length=1024)
+    score = serializers.IntegerField(required=True)
+    
+    def validate(self, attrs):
+        if self.context['request'].method == 'PUT':
+            if attrs.get('user_id') != self.instance.user_id or \
+                attrs.get('restaurant_id') != self.instance.restaurant_id:
+                raise serializers.ValidationError("restaurant_id and user_id can't not be modified")
+        return attrs
+    
     def validate_score(self, score):
         if score < 0 or score > 5:
             raise serializers.ValidationError("Score must between 1 and 5")
@@ -37,7 +48,7 @@ class RestaurantListSerializer(serializers.ListSerializer):
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(validators = [
+    name = serializers.CharField(required=True, max_length=64, validators=[
             UniqueValidator(
                 queryset=Restaurant.objects.all()
             )
