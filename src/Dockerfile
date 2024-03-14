@@ -1,7 +1,7 @@
 FROM tiangolo/uwsgi-nginx:python3.11
 COPY ./api /api
 WORKDIR /api
-ENV UWSGI_INI ./CyCarrier/uwsgi.ini
+ENV UWSGI_INI ./GoogleReviews/uwsgi.ini
 COPY entrypoint.sh /entrypoint.sh
 
 RUN pip3 install -r requirements.txt

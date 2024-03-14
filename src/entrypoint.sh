@@ -6,4 +6,4 @@ python3 manage.py migrate
 
 # Start server
 echo "Starting server"
-nginx -g "daemon on;" && uwsgi --ini ./CyCarrier/uwsgi.ini
+nginx -g "daemon on;" && uwsgi --ini ./GoogleReviews/uwsgi.ini
