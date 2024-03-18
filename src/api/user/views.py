@@ -21,7 +21,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True)
     def reviews(self, request, pk=None):
-        instance = self.get_object()
+        instance = User.objects.prefetch_related('reviews').get(pk=pk)
         serializer = UserReviewSerializer(instance.reviews.all(), many=True)
         return Response(serializer.data)
     
