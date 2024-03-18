@@ -42,9 +42,13 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
     @action(detail=True)
     def reviews(self, request, pk=None):
-        instance = Restaurant.objects.prefetch_related('reviews').get(pk=pk)
-        serializer = RestaurantReviewSerializer(instance.reviews.all(), many=True)
-        return Response(serializer.data)
+        try:
+            instance = Restaurant.objects.prefetch_related('reviews').get(pk=pk)
+        except Restaurant.DoesNotExist:
+            return Response({"detail":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        reviews = self.paginate_queryset(instance.reviews.all())
+        serializer = RestaurantReviewSerializer(reviews, many=True)
+        return self.get_paginated_response(serializer.data)
     
     def get_permissions(self):
         if self.action in ['list', 'retrieve', 'reviews']:

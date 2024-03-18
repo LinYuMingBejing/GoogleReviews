@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly
@@ -21,9 +21,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True)
     def reviews(self, request, pk=None):
-        instance = User.objects.prefetch_related('reviews').get(pk=pk)
-        serializer = UserReviewSerializer(instance.reviews.all(), many=True)
-        return Response(serializer.data)
+        try:
+            instance = User.objects.prefetch_related('reviews').get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"detail":"Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        reviews = self.paginate_queryset(instance.reviews.all())
+        serializer = UserReviewSerializer(reviews, many=True)
+        return self.get_paginated_response(serializer.data)
     
 
 class RegisterViewSet(generics.CreateAPIView):
