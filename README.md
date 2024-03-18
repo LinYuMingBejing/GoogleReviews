@@ -1,8 +1,32 @@
 # Google Review System
+![img](https://i.ibb.co/93nv1Lq/2024-03-18-191922.png)
 ## Environment:
 * Backend: Django Rest Framework
 * Deploy: Docker, Docker Compose
 
+## Rule
+**General users have the following permissions:**
+
+* Browse restaurant information.
+* View reviews of restaurants by other users.
+* Edit or delete their own reviews.
+
+**Admin has the following permissions:**
+
+* Edit or delete restaurant information.
+
+## Format
+**Restaurant**
+* name
+* review_count
+* score
+
+**Review**
+* title
+* content
+* score
+* user
+* restaurant
 
 ## Google Review APIs 
 |  Resources  | Method  | Authorization  | Response  | 
