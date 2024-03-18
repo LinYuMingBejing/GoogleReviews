@@ -15,7 +15,7 @@ class Restaurant(models.Model):
 
 class Review(models.Model):
     title = models.CharField(max_length=64, null=False, default='')
-    content = models.TextField(null=False, max_length=1024, default='')
+    content = models.CharField(null=False, max_length=1024, default='')
     score = models.PositiveIntegerField(default=0)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews', default='')
