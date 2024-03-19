@@ -11,7 +11,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     score = serializers.IntegerField(required=True)
     
     def validate_score(self, score):
-        if score < 0 or score > 5:
+        if score < 1 or score > 5:
             raise serializers.ValidationError("Score must between 1 and 5")
         return score
     
