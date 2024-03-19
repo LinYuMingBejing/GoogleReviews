@@ -18,13 +18,13 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate_user(self, user):
         if self.context['request'].user != user:
             raise serializers.ValidationError("user ID is not matched")
-        if self.context['request'].method == 'PUT' and \
+        if self.context['request'].method in ['PUT', 'PATCH'] and \
             user != self.instance.user:
             raise serializers.ValidationError("user can't not be modified")
         return user
     
     def validate_restaurant(self, restaurant):
-        if self.context['request'].method == 'PUT' and \
+        if self.context['request'].method in ['PUT', 'PATCH'] and \
             restaurant != self.instance.restaurant:
                 raise serializers.ValidationError("restaurant can't not be modified")
         return restaurant
