@@ -87,7 +87,7 @@ class RestaurantTestCase(RestaurantReviewTestCase):
         }
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.user1_token}')
         response = self.client.post(self.url, test_data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_restaurant_update(self):
         test_data = {
