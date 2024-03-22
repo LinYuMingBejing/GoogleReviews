@@ -116,9 +116,10 @@ class UserReviewTestCase(APITestCase):
     def test_user_review_retrieve(self):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.user_token}')
         response = self.client.get(self.user_review_detail.format(self.user.id))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)       
-        self.assertIsInstance(response.data, list)
-        self.assertTrue(len(response.data) > 0)  
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('results', response.data)
+        self.assertIsInstance(response.data['results'], list)
+        self.assertTrue(len(response.data['results']) > 0)
     
     @classmethod
     def tearDownClass(cls):

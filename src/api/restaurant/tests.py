@@ -115,9 +115,9 @@ class RestaurantTestCase(RestaurantReviewTestCase):
 
     def test_restaurant_review_retrieve(self):
         response = self.client.get(self.restaurant_review_detail.format(self.restaurant.id))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIsInstance(response.data, list)
-        self.assertTrue(len(response.data) > 0)  
+        self.assertIn('results', response.data)
+        self.assertIsInstance(response.data['results'], list)
+        self.assertTrue(len(response.data['results']) > 0)
 
 
 class ReviewTestCase(RestaurantReviewTestCase):
