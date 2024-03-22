@@ -9,19 +9,12 @@ class ReviewSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True, max_length=64)
     content = serializers.CharField(required=True, max_length=1024)
     score = serializers.IntegerField(required=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     
     def validate_score(self, score):
         if score < 1 or score > 5:
             raise serializers.ValidationError("Score must between 1 and 5")
         return score
-    
-    def validate_user(self, user):
-        if self.context['request'].user != user:
-            raise serializers.ValidationError("user ID is not matched")
-        if self.context['request'].method in ['PUT', 'PATCH'] and \
-            user != self.instance.user:
-            raise serializers.ValidationError("user can't not be modified")
-        return user
     
     def validate_restaurant(self, restaurant):
         if self.context['request'].method in ['PUT', 'PATCH'] and \
@@ -64,7 +57,6 @@ class RestaurantSerializer(serializers.ModelSerializer):
     
     def to_representation(self, value):
         data = super().to_representation(value)
-
         reviews = Restaurant.objects.annotate(
             count=Count('reviews'),
             score=Avg('reviews__score')

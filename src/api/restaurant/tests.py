@@ -144,7 +144,6 @@ class ReviewTestCase(RestaurantReviewTestCase):
             'title': 'I"d even seen....',
             'content': 'Worst service',
             'score': 1,
-            'user': self.user1.id,
             'restaurant': self.restaurant.id
         }
         response = self.client.post(self.url, test_data)
@@ -155,7 +154,6 @@ class ReviewTestCase(RestaurantReviewTestCase):
             'title': 'I"d even seen....',
             'content': 'Worst service',
             'score': 1,
-            'user': self.user2.id,
             'restaurant': self.restaurant.id
         }
         response = self.client.post(self.url, test_data)
@@ -166,7 +164,6 @@ class ReviewTestCase(RestaurantReviewTestCase):
             'title': 'I"d even seen....',
             'content': 'Worst service',
             'score': 1,
-            'user': self.user2.id,
             'restaurant': self.restaurant.id
         }
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.user2_token}')
@@ -177,24 +174,11 @@ class ReviewTestCase(RestaurantReviewTestCase):
         self.assertEqual(response.data.get('content', None), test_data['content'])
         self.assertEqual(response.data.get('score', None), test_data['score'])
 
-    def test_review_update_with_bad_request(self):
-        test_data = {
-            'title': 'Delicious food',
-            'content': 'Best service',
-            'score': 5,
-            'user': self.user2.id,
-            'restaurant': self.restaurant.id
-        }
-        response = self.client.put(self.review_detail.format(self.review.id), test_data)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
     def test_review_update(self):
         test_data = {
             'title': 'Delicious food',
             'content': 'Best service',
             'score': 5,
-            'user': self.user1.id,
             'restaurant': self.restaurant.id
         }
         response = self.client.put(self.review_detail.format(self.review.id), test_data)
