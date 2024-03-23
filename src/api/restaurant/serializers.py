@@ -1,4 +1,3 @@
-from django.db.models import Avg, Count
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
 
@@ -41,7 +40,6 @@ class RestaurantReviewSerializer(serializers.ModelSerializer):
 
 
 class RestaurantListSerializer(serializers.ListSerializer):
-    
     def create(self, validated_data):
         restaurants = [Restaurant(**item) for item in validated_data]
         return Restaurant.objects.bulk_create(restaurants)
@@ -54,22 +52,17 @@ class RestaurantSerializer(serializers.ModelSerializer):
             )
         ]
     )
-    
+    score = serializers.IntegerField(read_only=True)
+    review_count = serializers.IntegerField(read_only=True)
+
     def to_representation(self, value):
         data = super().to_representation(value)
-        reviews = Restaurant.objects.annotate(
-            count=Count('reviews'),
-            score=Avg('reviews__score')
-        ).get(pk=value.pk)
-        
-        data['review_count'] = reviews.count
-        data['score'] = reviews.score if reviews.score else 0
-        
+        data['score'] = round(data['score'], 1) if data['score'] else 5
         return data
     
     class Meta:
         model = Restaurant
         list_serializer_class = RestaurantListSerializer
-        fields = ('id', 'name', )
+        fields = ('id', 'name', 'score', 'review_count')
         read_only_fields = ('id', 'created_time', 'updated_time', )
         depth = 1

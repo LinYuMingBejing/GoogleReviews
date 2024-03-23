@@ -1,3 +1,4 @@
+from django.db.models import Avg, Count
 from rest_framework import filters
 from rest_framework import status
 from rest_framework import viewsets
@@ -33,7 +34,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):
-    queryset = Restaurant.objects.all()
+    queryset = Restaurant.objects.annotate(
+            review_count=Count('reviews'),
+            score=Avg('reviews__score')
+        ).all()
     permission_classes = [IsAdminUser]
     serializer_class = RestaurantSerializer
     filter_backends = (filters.SearchFilter, filters.OrderingFilter,)
